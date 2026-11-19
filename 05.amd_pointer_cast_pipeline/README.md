@@ -5,7 +5,7 @@ casts it to a pointer to `uint` with `OpBitcast` and loads 32-bit words through 
 RX 6800, `vkCreateComputePipelines` crashes the process with an access violation
 (0xC0000005), so the program stops after `creating compute pipeline cs_main ...` and prints no
 `RESULT`. The GTX 1660 creates the pipeline in about 17 ms and gets the right values.
-`spirv-val` and the validation layer are clean on both.
+`spirv-val` is clean, and so is the validation layer on the GTX 1660.
 
 ```
 .builds\default\amd_pointer_cast_pipeline.exe --variant bad
@@ -26,17 +26,16 @@ The `bad` module ([spirv/amd_pointer_cast_pipeline.bad.spvasm](spirv/amd_pointer
 
 | Variant | How the push constants hold `weights` | RX 6800, 26.10.1 and 26.11.2 | Vega 11, Linux proprietary 23.30 |
 |---|---|---|---|
-| `bad` | `uint16_t*`, cast to `uint*` at the load | **CRASH** in `vkCreateComputePipelines` (0xC0000005) | **CRASH**: SIGSEGV in `vkCreateComputePipelines` |
+| `bad` | `uint16_t*`, cast to `uint*` at the load | CRASH in `vkCreateComputePipelines` (0xC0000005) | CRASH: SIGSEGV in `vkCreateComputePipelines` |
 | `good` | `uint*`, no cast; the same loads | PASS | PASS |
 
-- **Expected:** the pipeline is created and `output[i] = weights[i % 64]`, the values 1-64.
-- **RX 6800:** the process crashes inside the driver's pipeline compile, before the validation
-  layer can report anything.
-- **Vega 11, proprietary 23.30:** the same crash, so there is no ISA to compare.
+The pipeline should be created and give `output[i] = weights[i % 64]`, the values 1 to 64. On
+the RX 6800 the process crashes inside the driver's pipeline compile, before the validation
+layer can report anything. The Vega 11 proprietary driver crashes the same way, so there is no
+ISA to compare.
 
-Every variant passes, with the validation layer clean, on the GTX 1660 SUPER (NVIDIA 621.01)
-and, on the Vega 11, with Mesa RADV and AMDVLK 2023.Q3.3. RADV creates the `bad` pipeline in
-0.8 ms.
+Every variant passes with the validation layer clean on the GTX 1660 SUPER (NVIDIA 621.01),
+and on the Vega 11 with Mesa RADV and AMDVLK 2023.Q3.3. RADV creates the `bad` pipeline in 0.8 ms.
 
 ## Notes
 

@@ -1,9 +1,9 @@
 # 03. 16-bit load through a pointer held in push constants reads 0
 
-The push constant block holds a `PhysicalStorageBuffer` pointer to `uint16_t`. Each
-invocation loads one value through it and stores it as a float. On the RX 6800 every load
-returns 0. The GTX 1660 reads the stored values. `spirv-val` and the validation layer are
-clean.
+On the RX 6800, a 16-bit load through a `uint16_t` pointer held in push constants always
+returns 0. The push constant block holds a `PhysicalStorageBuffer` pointer to `uint16_t`, and
+each invocation loads one value through it and stores it as a float. The GTX 1660 reads the
+stored values. `spirv-val` and the validation layer are clean.
 
 ```
 .builds\default\amd_u16_push_pointer.exe --variant bad
@@ -24,15 +24,15 @@ module ([spirv/amd_u16_push_pointer.bad.spvasm](spirv/amd_u16_push_pointer.bad.s
 
 | Variant | How the push constants hold `weights` | RX 6800, 26.10.1 and 26.11.2 | Vega 11, Linux proprietary 23.30 |
 |---|---|---|---|
-| `bad` | `uint16_t*` | **WRONG**: 65536 of 65536 values are 0 | **WRONG**: 65536 of 65536 are 0; 2039 ms against 0.4 ms |
+| `bad` | `uint16_t*` | WRONG: 65536 of 65536 values are 0 | WRONG: 65536 of 65536 are 0; 2039 ms against 0.4 ms |
 | `u64` | `uint64_t`, turned into a `uint16_t*` by `OpConvertUToPtr` at the load; the same 16-bit load | PASS | PASS |
 | `u32` | `uint*`; the 32-bit word holding the value is loaded and shifted | PASS | PASS |
 
-- **Expected:** `output[i] = weights[i % 64]`, the values 1-64.
-- **RX 6800:** all 0. The validation layer is clean for all three variants.
+The expected output is `output[i] = weights[i % 64]`, the values 1 to 64. On the RX 6800 it
+is all 0, with the validation layer clean for all three variants.
 
-Every variant passes, with the validation layer clean, on the GTX 1660 SUPER (NVIDIA 621.01)
-and, on the Vega 11, with Mesa RADV and AMDVLK 2023.Q3.3.
+Every variant passes with the validation layer clean on the GTX 1660 SUPER (NVIDIA 621.01),
+and on the Vega 11 with Mesa RADV and AMDVLK 2023.Q3.3.
 
 ## Cause in the generated ISA
 
@@ -53,8 +53,8 @@ global_load_ushort v1, v[1:2], off               global_load_ushort v1, v[1:2], 
 ```
 
 In `bad`, `v_mov_b32 v2, s5` is missing. The high half of the address comes from `v2`, which
-nothing has written, so the load reads from an unrelated address. The compiler's own statistics
-say so: `bHasUndefUsed = true` for `bad` and `false` for `u64` and `u32`. The bad address
+nothing has written, so the load reads from some other address. The compiler's own statistics
+agree: `bHasUndefUsed = true` for `bad` and `false` for `u64` and `u32`. The bad address
 probably also explains the 2 s run time of `bad` on the Vega 11.
 
 The other drivers keep the high half. RADV (ACO) emits `v_mov_b32 v1, s5` before its
@@ -86,15 +86,15 @@ before the loop all made no difference. HLSL can't express this: DXC passes addr
 
 Not reproducible from this repo. Kept for the record.
 
-- **Bugcheck 0xD1 (DRIVER_IRQL_NOT_LESS_OR_EQUAL) in amdkmdag.sys**: parameters
+- Bugcheck 0xD1 (DRIVER_IRQL_NOT_LESS_OR_EQUAL) in amdkmdag.sys, parameters
   `0xffff868ff4df0018, 0x8, 0x0, 0xfffff8077b6d5100`. It came moments after one run of
   [spirv/bugcheck/u16_load_loop.slang.spv](spirv/bugcheck/u16_load_loop.slang.spv), the
   original larger Slang module that this case was reduced from, with an edit to write out
   the loaded value. The run itself had printed all-zero results and exited. The program that
   ran it is in this repo's history (commit 5adceb6, `u16_load_loop.exe --variant
   slang_shape_only`). It was not run again. **Do not run it on a machine you need.**
-- **Bugcheck 0x13A (KERNEL_MODE_HEAP_CORRUPTION)**: parameters `0x12, 0xffffe58576000140,
+- Bugcheck 0x13A (KERNEL_MODE_HEAP_CORRUPTION), parameters `0x12, 0xffffe58576000140,
   0xffffe585a9592000, 0x0`. It happened during a batch of four runs of intermediate
-  reductions; which run caused it is not known.
+  reductions. Which run caused it is not known.
 
 Kernel minidumps for both are available on request.

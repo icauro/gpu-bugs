@@ -1,19 +1,19 @@
 # GPU bugs
 
-Minimal repros of GPU driver bugs, for the driver developers. All of them are currently in
-AMD's proprietary Vulkan shader compiler.
+Small Vulkan programs that reproduce bugs in AMD's proprietary Vulkan shader compiler, one
+per issue, for the driver developers.
 
-Small C17 + Vulkan 1.3 programs, one per issue. Each one runs a compute or graphics shader on
-data it generates, checks the result against a CPU reference, and prints `RESULT: PASS` or the
-failure. Every SPIR-V module passes `spirv-val`, and the Khronos validation layer reports
-nothing for any of them (05 `bad` crashes the driver before the layer can report). The
-same programs pass on an NVIDIA GTX 1660 SUPER.
+Each one is a C17 + Vulkan 1.3 program that runs a compute or graphics shader on data it
+generates, checks the result against a CPU reference and prints `RESULT: PASS` or the failure.
+Every SPIR-V module passes `spirv-val`, and the Khronos validation layer reports nothing for
+any of them (05 `bad` crashes the driver before the layer gets to report). The same programs
+pass on an NVIDIA GTX 1660 SUPER.
 
-The bugs were found on a Radeon RX 6800 under Windows. Every case also reproduces with AMD's
-proprietary Linux Vulkan driver on a Radeon Vega 11 (GCN 5): 02, 03 and 04 with the same
-failure counts, while 01 crashes the compiler there instead of giving wrong values. The same
-modules pass on that GPU with AMDVLK (LLPC) and with Mesa RADV. So the problems follow AMD's
-proprietary shader compiler, across GPU generations and operating systems.
+The bugs were found on a Radeon RX 6800 under Windows. AMD's proprietary Linux Vulkan driver
+on a Radeon Vega 11 (GCN 5) has them too: 02, 03 and 04 fail with the same counts, and 01
+crashes the compiler there instead of giving wrong values. On that same Vega 11, AMDVLK (LLPC)
+and Mesa RADV pass every case. So the bugs are in the proprietary compiler, on both GPU
+generations and both operating systems.
 
 ## Issues
 
@@ -26,9 +26,10 @@ proprietary shader compiler, across GPU generations and operating systems.
 | [04.amd_bitcast_u16_pointer](04.amd_bitcast_u16_pointer) | 16-bit load through a pointer made by `OpBitcast` from a 64-bit integer reads wrong data | `amd_bitcast_u16_pointer.exe --variant bad` |
 | [05.amd_pointer_cast_pipeline](05.amd_pointer_cast_pipeline) | `OpBitcast` of a `uint16_t` pointer from push constants to a `uint` pointer crashes `vkCreateComputePipelines` | `amd_pointer_cast_pipeline.exe --variant bad` |
 
-Each case README has the results of every variant on every driver below, and, for 02, 03 and
-04, the cause as it shows in the proprietary compiler's ISA (`--dump-isa`), with the dumps in
-the case's `isa/` folder. 01 and 05 crash inside that compiler, so they have no ISA.
+Each case README lists the result of every variant on each driver below. For 02, 03 and 04
+it also shows the cause in the proprietary compiler's ISA (`--dump-isa`), with the dumps in the
+case's `isa/` folder. 05 crashes that compiler on both GPUs and 01 crashes it on the Vega 11,
+so those two have no ISA dumps.
 
 ## Drivers tested
 
@@ -42,8 +43,8 @@ All on 2026-11-19.
 | Radeon Vega 11 | Mesa 26.2.6 RADV (ACO) | Linux 7.3 | control: every variant passes |
 | GeForce GTX 1660 SUPER | NVIDIA 621.01 | Windows 11 build 26300 | control: every variant passes |
 
-23.30 and AMDVLK 2023.Q3.3 are the last of each with GFX9 support. With the validation layer
-(Vulkan SDK 1.4.357.0 on Linux) there are no messages on any of these. The modules built
+23.30 and AMDVLK 2023.Q3.3 are the last releases of each with GFX9 support. The validation
+layer (Vulkan SDK 1.4.357.0 on Linux) has no messages on any of these. The modules built
 with DXC and Slang on Linux are byte-identical to the checked-in ones.
 
 ## Build
@@ -58,8 +59,8 @@ build.bat
 
 Executables go to `.builds\default\`, SPIR-V to `.builds\default\shaders\`.
 
-Without the shader compilers (any OS, Linux included), build only the programs and run them
-on the checked-in modules:
+Without the shader compilers, on any OS, build only the programs and run them on the
+checked-in modules:
 
 ```
 cmake -S . -B .builds/linux -G Ninja -DREPRO_SHADERS=OFF

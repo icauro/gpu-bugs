@@ -1,10 +1,11 @@
 # 02. Workgroup-scope memory barrier in subgroup-divergent flow breaks a later control barrier
 
-Some subgroups of a workgroup run a loop with a workgroup-scope `OpMemoryBarrier`
-(`GroupMemoryBarrier()`) in it, and the others skip the loop. Then every invocation reaches a
-workgroup `OpControlBarrier` (`GroupMemoryBarrierWithGroupSync()`) and reads a value that
-another subgroup wrote before it. On the RX 6800 every result is wrong. The GTX 1660 matches
-the CPU reference. `spirv-val` and the validation layer are clean on both.
+On the RX 6800, a workgroup-scope `OpMemoryBarrier` that only some subgroups reach breaks the
+workgroup control barrier after it, and every result is wrong. Some subgroups run a loop with
+`GroupMemoryBarrier()` in it and the others skip the loop. Then every invocation reaches
+`GroupMemoryBarrierWithGroupSync()` and reads a value that another subgroup wrote before it.
+The GTX 1660 matches the CPU reference. `spirv-val` and the validation layer are clean on
+both.
 
 ```
 .builds\default\amd_divergent_group_fence.exe --variant bad
@@ -24,8 +25,8 @@ OpControlBarrier %uint_2 %uint_2 %uint_264
 OpControlBarrier %uint_2 %uint_2 %uint_264
 ```
 
-SPIR-V allows `OpMemoryBarrier` in control flow that only some invocations reach: it orders
-memory and does not wait for other invocations.
+SPIR-V allows `OpMemoryBarrier` in control flow that only some invocations reach. It orders
+memory and doesn't wait for other invocations.
 
 1024 workgroups of 256 invocations, 8 passes. In each pass, the subgroups whose flag is set
 run 4 rounds of: write own slot, fence, read slot `local ^ 1` and add 1, fence. Then every
@@ -34,21 +35,20 @@ adds the value 64 invocations further on, which is in another subgroup.
 
 | Variant | Fence | Subgroups that run the fenced rounds | RX 6800, 26.10.1 and 26.11.2 | Vega 11, Linux proprietary 23.30 |
 |---|---|---|---|---|
-| `bad` | `OpMemoryBarrier` Workgroup | half (subgroup size 64) | **WRONG**: 262144 of 262144 values differ | **WRONG**: 262144 of 262144 |
+| `bad` | `OpMemoryBarrier` Workgroup | half (subgroup size 64) | WRONG: 262144 of 262144 values differ | WRONG: 262144 of 262144 |
 | `uniform` | same module | all | PASS | PASS |
 | `good` | `OpMemoryBarrier` Subgroup | half | PASS | PASS |
 
-- **Expected:** the CPU reference in [main.c](main.c).
-- **RX 6800:** every value differs, and the values change from run to run.
+The expected values come from the CPU reference in [main.c](main.c). On the RX 6800 every
+value differs and they change from run to run. The validation layer is clean for `bad` there.
 
-Every variant passes, with the validation layer clean, on the GTX 1660 SUPER (NVIDIA 621.01)
-and, on the Vega 11, with Mesa RADV and AMDVLK 2023.Q3.3. The validation layer is also clean
-for `bad` on the RX 6800.
+Every variant passes with the validation layer clean on the GTX 1660 SUPER (NVIDIA 621.01),
+and on the Vega 11 with Mesa RADV and AMDVLK 2023.Q3.3.
 
 ## Cause in the generated ISA
 
 AMD's proprietary shader compiler emits `s_barrier`, a workgroup execution barrier, for the
-workgroup-scope `OpMemoryBarrier`, inside control flow that only some subgroups run. The ISA
+workgroup-scope `OpMemoryBarrier`, inside the branch that only some subgroups run. The ISA
 below is from the proprietary Linux driver 23.30 on a Vega 11 (GFX9), read through
 `VK_KHR_pipeline_executable_properties` with `--dump-isa`. It is one pass: the fenced rounds
 under `s_and_saveexec` / `s_cbranch_execz`, then the control barrier section.
@@ -75,16 +75,16 @@ label_0034:                                        ds_write_b32  v0, v3 offset:1
   s_barrier                    ; control barrier
 ```
 
-`s_barrier` counts waves, not program points. In `bad`, a subgroup whose flag is clear skips
-the rounds and its first `s_barrier` is the control barrier, while the flagged subgroups are
-at their first fence. Those two meet and release each other, so from there on every barrier
-pairs with the wrong one: the skipping subgroups read `g_shared` before the others wrote it,
-and every value is wrong. `uniform` runs the same module with every subgroup flagged, so all
+`s_barrier` counts waves and has no idea which barrier in the program each wave is at. In
+`bad`, a subgroup whose flag is clear skips the rounds, so its first `s_barrier` is the control
+barrier while the flagged subgroups are at their first fence. Those meet and release each
+other, and from there on every barrier pairs with the wrong one. The skipping subgroups read
+`g_shared` before the others have written it. `uniform` runs the same module with every subgroup flagged, so all
 waves reach the same barriers in the same order, and it passes. `good` has no barrier inside
 the branch.
 
-A workgroup-scope memory barrier only needs the wave's own LDS accesses to complete
-(`s_waitcnt lgkmcnt(0)`); it must not wait for other waves. RADV (ACO) and AMDVLK (LLPC) emit
+A workgroup-scope memory barrier only has to wait for the wave's own LDS accesses
+(`s_waitcnt lgkmcnt(0)`), and it must not wait for other waves. RADV (ACO) and AMDVLK (LLPC) emit
 two `s_barrier` instructions in `bad`, both for the control barriers after the branch.
 
 The RX 6800 (RDNA2, GFX10.3, Windows driver 26.10.1) emits the same code: both fences are

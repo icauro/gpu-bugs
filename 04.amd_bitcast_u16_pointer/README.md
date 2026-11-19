@@ -1,7 +1,8 @@
 # 04. 16-bit load through a pointer made by OpBitcast reads wrong data
 
-One thread per element copies `src[i]` to `dst[i]`, with `src` read through
-`vk::RawBufferLoad<uint16_t>`.
+On the RX 6800, a 16-bit load through a pointer made by `OpBitcast` from a 64-bit integer reads
+from the wrong address. One thread per element copies `src[i]` to `dst[i]`, with `src` read
+through `vk::RawBufferLoad<uint16_t>`, which DXC compiles to that `OpBitcast`.
 
 ```
 .builds\default\amd_bitcast_u16_pointer.exe --variant bad
@@ -22,18 +23,17 @@ module ([spirv/amd_bitcast_u16_pointer.bad.spvasm](spirv/amd_bitcast_u16_pointer
 
 | Variant | Load | Pointer | RX 6800, 26.10.1 and 26.11.2 | Vega 11, Linux proprietary 23.30 |
 |---|---|---|---|---|
-| `bad` | `uint16_t` | `OpBitcast` | **WRONG**: 65535 of 65536 values | **WRONG**: 65535 of 65536 |
+| `bad` | `uint16_t` | `OpBitcast` | WRONG: 65535 of 65536 values | WRONG: 65535 of 65536 |
 | `u32` | `uint` | `OpBitcast` | PASS | PASS |
 | `good` | `uint16_t` | `OpConvertUToPtr` (the DXC output patched by `common/convert_u_to_ptr.cmake`) | PASS | PASS |
 
-- **Expected:** `dst` equals `src`, as on the GTX 1660.
-- **RX 6800:** `dst` holds the same sequence (104, 0, 55272, 7411, 18436, ...) on every run.
-  The sequence is the same with `src` in host-cached memory, in device-local memory, or a
-  different buffer altogether, so the load is not reading the address it was given. The
-  validation layer is clean for `bad`.
+`dst` should equal `src`, as it does on the GTX 1660. On the RX 6800 `dst` holds the same
+sequence (104, 0, 55272, 7411, 18436, ...) on every run. The sequence stays the same with `src`
+in host-cached memory, in device-local memory or in a different buffer, so the load isn't
+reading the address it was given. The validation layer is clean for `bad`.
 
-Every variant passes, with the validation layer clean, on the GTX 1660 SUPER (NVIDIA 621.01)
-and, on the Vega 11, with Mesa RADV and AMDVLK 2023.Q3.3.
+Every variant passes with the validation layer clean on the GTX 1660 SUPER (NVIDIA 621.01),
+and on the Vega 11 with Mesa RADV and AMDVLK 2023.Q3.3.
 
 ## Cause in the generated ISA
 
@@ -54,10 +54,10 @@ global_load_ushort v0, v[3:4], off               global_load_ushort v0, v[0:1], 
 In `bad` the 64-bit `OpIAdd` becomes a 32-bit add: `s3`, the high half of `src`, is never
 read. Then the sum is split into two zero-extended 16-bit halves, low 16 bits into the address
 low dword and high 16 bits into the address high dword, as if the 32-bit value were a vector of
-two 16-bit elements to widen. The load address is `(lo >> 16) << 32 | (lo & 0xffff)` rather
-than `src + 2 * i`, which matches what the RX 6800 shows: the same wrong values on every run,
+two 16-bit elements to widen. The load address becomes `(lo >> 16) << 32 | (lo & 0xffff)`
+instead of `src + 2 * i`. That fits what the RX 6800 shows: the same wrong values on every run,
 whatever buffer `src` is. The compiler statistics report `bHasUndefUsed = false` for both
-variants, so nothing undefined is read; the address is computed wrongly. The `u32` variant
+variants, so nothing undefined is read. The address is simply computed wrong. The `u32` variant
 uses the same `OpBitcast` with a 32-bit load, and its address is right.
 
 The other drivers keep the full address. RADV (ACO) and AMDVLK (LLPC) both load through the
