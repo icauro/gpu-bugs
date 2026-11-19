@@ -1,0 +1,82 @@
+; SPIR-V
+; Version: 1.6
+; Generator: Google spiregg; 0
+; Bound: 50
+; Schema: 0
+               OpCapability Shader
+               OpCapability Int64
+               OpCapability Int16
+               OpCapability PhysicalStorageBufferAddresses
+               OpMemoryModel PhysicalStorageBuffer64 GLSL450
+               OpEntryPoint GLCompute %cs_main "cs_main" %gl_GlobalInvocationID %push
+               OpExecutionMode %cs_main LocalSize 64 1 1
+               OpSource HLSL 660
+               OpName %type_PushConstant_Push "type.PushConstant.Push"
+               OpMemberName %type_PushConstant_Push 0 "src"
+               OpMemberName %type_PushConstant_Push 1 "dst"
+               OpMemberName %type_PushConstant_Push 2 "count"
+               OpName %push "push"
+               OpName %cs_main "cs_main"
+               OpDecorate %gl_GlobalInvocationID BuiltIn GlobalInvocationId
+               OpMemberDecorate %type_PushConstant_Push 0 Offset 0
+               OpMemberDecorate %type_PushConstant_Push 1 Offset 8
+               OpMemberDecorate %type_PushConstant_Push 2 Offset 16
+               OpDecorate %type_PushConstant_Push Block
+        %int = OpTypeInt 32 1
+      %int_0 = OpConstant %int 0
+      %int_2 = OpConstant %int 2
+       %uint = OpTypeInt 32 0
+     %uint_2 = OpConstant %uint 2
+      %int_1 = OpConstant %int 1
+     %uint_4 = OpConstant %uint 4
+      %ulong = OpTypeInt 64 0
+%type_PushConstant_Push = OpTypeStruct %ulong %ulong %uint
+%_ptr_PushConstant_type_PushConstant_Push = OpTypePointer PushConstant %type_PushConstant_Push
+     %v3uint = OpTypeVector %uint 3
+%_ptr_Input_v3uint = OpTypePointer Input %v3uint
+       %void = OpTypeVoid
+         %17 = OpTypeFunction %void
+%_ptr_PushConstant_uint = OpTypePointer PushConstant %uint
+       %bool = OpTypeBool
+%_ptr_PushConstant_ulong = OpTypePointer PushConstant %ulong
+     %ushort = OpTypeInt 16 0
+%_ptr_PhysicalStorageBuffer_ushort = OpTypePointer PhysicalStorageBuffer %ushort
+%_ptr_PhysicalStorageBuffer_uint = OpTypePointer PhysicalStorageBuffer %uint
+       %push = OpVariable %_ptr_PushConstant_type_PushConstant_Push PushConstant
+%gl_GlobalInvocationID = OpVariable %_ptr_Input_v3uint Input
+     %uint_0 = OpConstant %uint 0
+%_ptr_Input_uint = OpTypePointer Input %uint
+    %cs_main = OpFunction %void None %17
+         %26 = OpLabel
+               OpSelectionMerge %27 None
+               OpSwitch %uint_0 %28
+         %28 = OpLabel
+         %29 = OpAccessChain %_ptr_Input_uint %gl_GlobalInvocationID %int_0
+         %30 = OpLoad %uint %29
+         %31 = OpAccessChain %_ptr_PushConstant_uint %push %int_2
+         %32 = OpLoad %uint %31
+         %33 = OpUGreaterThanEqual %bool %30 %32
+               OpSelectionMerge %34 None
+               OpBranchConditional %33 %35 %34
+         %35 = OpLabel
+               OpBranch %27
+         %34 = OpLabel
+         %36 = OpAccessChain %_ptr_PushConstant_ulong %push %int_0
+         %37 = OpLoad %ulong %36
+         %38 = OpIMul %uint %30 %uint_2
+         %39 = OpUConvert %ulong %38
+         %40 = OpIAdd %ulong %37 %39
+         %41 = OpBitcast %_ptr_PhysicalStorageBuffer_ushort %40
+         %42 = OpLoad %ushort %41 Aligned 2
+         %43 = OpUConvert %uint %42
+         %44 = OpAccessChain %_ptr_PushConstant_ulong %push %int_1
+         %45 = OpLoad %ulong %44
+         %46 = OpIMul %uint %30 %uint_4
+         %47 = OpUConvert %ulong %46
+         %48 = OpIAdd %ulong %45 %47
+         %49 = OpBitcast %_ptr_PhysicalStorageBuffer_uint %48
+               OpStore %49 %43 Aligned 4
+               OpBranch %27
+         %27 = OpLabel
+               OpReturn
+               OpFunctionEnd

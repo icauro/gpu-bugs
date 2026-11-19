@@ -1,0 +1,25 @@
+==== executable 0: ShaderProperties.cs (Executable handles following Vulkan stages:  VK_SHADER_STAGE_COMPUTE_BIT ), subgroup size 64
+numUsedVgprs: 4
+numUsedSgprs: 10
+ldsSizePerLocalWorkGroup: 65536
+ldsUsageSizeInBytes: 0
+scratchMemUsageInBytes: 0
+---- ISA.cs (Executable handles following Vulkan stages:  VK_SHADER_STAGE_COMPUTE_BIT )
+_amdgpu_cs_main:
+BB0_0:
+	v_and_b32_e32 v1, 63, v0               ; 260200BF
+	s_mov_b32 s7, s4                       ; BE870004
+	s_mov_b32 s6, s3                       ; BE860003
+	v_lshlrev_b32_e32 v1, 1, v1            ; 24020281
+	global_load_ushort v2, v1, s[6:7]      ; DC488000 02060001
+	v_lshl_add_u32 v0, s5, 6, v0           ; D1FD0000 04010C05
+	v_ashrrev_i32_e32 v1, 31, v0           ; 2202009F
+	v_lshlrev_b64 v[0:1], 2, v[0:1]        ; D28F0000 00020082
+	v_mov_b32_e32 v3, s2                   ; 7E060202
+	v_add_co_u32_e32 v0, vcc, s1, v0       ; 32000001
+	v_addc_co_u32_e32 v1, vcc, v3, v1, vcc ; 38020303
+	s_waitcnt vmcnt(0)                     ; BF8C0F70
+	v_cvt_f32_u32_e32 v2, v2               ; 7E040D02
+	global_store_dword v[0:1], v2, off     ; DC708000 007F0200
+	s_endpgm                               ; BF810000
+

@@ -1,0 +1,204 @@
+==== executable 0: ShaderProperties.cs (Executable handles following Vulkan stages:  VK_SHADER_STAGE_COMPUTE_BIT ), subgroup size 256
+numUsedVgprs: 7
+numUsedSgprs: 13
+ldsSizePerLocalWorkGroup: 65536
+ldsUsageSizeInBytes: 2048
+scratchMemUsageInBytes: 0
+---- ISA.cs (Executable handles following Vulkan stages:  VK_SHADER_STAGE_COMPUTE_BIT )
+; -------- Disassembly --------------------
+shader main
+  asic(GFX9)
+  type(CS)
+
+  v_mbcnt_lo_u32_b32  v1, -1, 0                         // 000000000000: D28C0001 000100C1
+  v_mbcnt_hi_u32_b32  v1, -1, v1                        // 000000000008: D28D0001 000202C1
+  v_sub_u32     v1, v0, v1                              // 000000000010: 6A020300
+  s_lshl_b32    s0, s10, 8                              // 000000000014: 8E00880A
+  v_add_lshl_u32  v1, v1, s0, 2                         // 000000000018: D1FE0001 02080101
+  v_add_co_u32  v1, vcc, s4, v1                         // 000000000020: 32020204
+  v_mov_b32     v2, s5                                  // 000000000024: 7E040205
+  v_addc_co_u32  v2, vcc, v2, 0, vcc                    // 000000000028: D11C6A02 01A90102
+  global_load_dword  v1, v[1:2], off                    // 000000000030: DC508000 017F0001
+  v_add_u32     v2, s0, v0                              // 000000000038: 68040000
+  v_lshlrev_b32  v3, 2, v2                              // 00000000003C: 24060482
+  v_add_co_u32  v3, vcc, s2, v3                         // 000000000040: 32060602
+  v_mov_b32     v4, s3                                  // 000000000044: 7E080203
+  v_addc_co_u32  v4, vcc, v4, 0, vcc                    // 000000000048: D11C6A04 01A90104
+  v_xor_b32     v5, 1, v0                               // 000000000050: 2A0A0081
+  v_add_u32     v6, 64, v0                              // 000000000054: 680C00C0
+  global_load_dword  v3, v[3:4], off                    // 000000000058: DC508000 037F0003
+  s_waitcnt     vmcnt(1)                                // 000000000060: BF8C0F71
+  v_cmp_ne_i32  s[0:1], v1, 0                           // 000000000064: D0C50000 00010101
+  v_lshlrev_b32  v0, 2, v0                              // 00000000006C: 24000082
+  v_lshlrev_b32  v1, 2, v5                              // 000000000070: 24020A82
+  v_lshlrev_b32  v4, 2, v6 src1_sel:BYTE_0              // 000000000074: 24080CF9 00860682
+  s_movk_i32    s2, 0x0000                              // 00000000007C: B0020000
+  s_cmp_gt_u32  s9, s2                                  // 000000000080: BF080209
+  s_cbranch_scc0  label_0041                            // 000000000084: BF84001F
+label_0022:
+  s_and_saveexec_b64  s[4:5], s[0:1]                    // 000000000088: BE842000
+  s_cbranch_execz  label_0034                           // 00000000008C: BF880010
+  s_movk_i32    s3, 0x0000                              // 000000000090: B0030000
+  s_cmp_gt_u32  s8, s3                                  // 000000000094: BF080308
+  s_nop         0x0000                                  // 000000000098: BF800000
+  s_cbranch_scc0  label_0034                            // 00000000009C: BF84000C
+label_0028:
+  s_waitcnt     vmcnt(0)                                // 0000000000A0: BF8C0F70
+  ds_write_b32  v0, v3                                  // 0000000000A4: D81A0000 00000300
+  s_barrier                                             // 0000000000AC: BF8A0000
+  ds_read_b32   v3, v1                                  // 0000000000B0: D86C0000 03000001
+  s_add_u32     s3, s3, 1                               // 0000000000B8: 80038103
+  s_waitcnt     lgkmcnt(0)                              // 0000000000BC: BF8CC07F
+  v_add_u32     v3, 1, v3                               // 0000000000C0: 68060681
+  s_barrier                                             // 0000000000C4: BF8A0000
+  s_cmp_gt_u32  s8, s3                                  // 0000000000C8: BF080308
+  s_cbranch_scc1  label_0028                            // 0000000000CC: BF85FFF4
+label_0034:
+  s_mov_b64     exec, s[4:5]                            // 0000000000D0: BEFE0104
+  s_waitcnt     vmcnt(0)                                // 0000000000D4: BF8C0F70
+  ds_write_b32  v0, v3 offset:1024                      // 0000000000D8: D81A0400 00000300
+  s_barrier                                             // 0000000000E0: BF8A0000
+  ds_read_b32   v5, v4 offset:1024                      // 0000000000E4: D86C0400 05000004
+  s_add_u32     s2, s2, 1                               // 0000000000EC: 80028102
+  s_waitcnt     lgkmcnt(0)                              // 0000000000F0: BF8CC07F
+  v_add_u32     v3, v3, v5                              // 0000000000F4: 68060B03
+  s_barrier                                             // 0000000000F8: BF8A0000
+  s_cmp_gt_u32  s9, s2                                  // 0000000000FC: BF080209
+  s_cbranch_scc1  label_0022                            // 000000000100: BF85FFE1
+label_0041:
+  v_lshlrev_b32  v0, 3, v2                              // 000000000104: 24000483
+  v_add_co_u32  v0, vcc, s6, v0                         // 000000000108: 32000006
+  v_mov_b32     v1, s7                                  // 00000000010C: 7E020207
+  v_addc_co_u32  v1, vcc, v1, 0, vcc                    // 000000000110: D11C6A01 01A90101
+  v_mov_b32     v4, 64                                  // 000000000118: 7E0802C0
+  s_waitcnt     vmcnt(0)                                // 00000000011C: BF8C0F70
+  global_store_dwordx2  v[0:1], v[3:4], off             // 000000000120: DC748000 007F0300
+  s_endpgm                                              // 000000000128: BF810000
+end
+
+; ----------------- CS Data ------------------------
+
+codeLenInByte        = 300 bytes;
+pm4CrcCodeLength     = 300 bytes;
+pm4Crc               = 344c149f7f5c9c82
+
+; launchModeFlags    = 0x00000400
+externalLogicalBinding = TRUE;
+
+userElementCount     = 0;
+extUserElementCount  = 0;
+NumVgprs             = 7;
+maxVgprs             = 256;
+NumSgprs             = 13;
+maxSgprs             = 102;
+FloatMode            = 192;
+IeeeMode             = 0;
+FlatPtr32            = 0;
+IsDynamicCallStack   = 0;
+MemOrdered           = 0;
+ScratchSize          = 0 dwords/thread;
+LDSByteSize          = 2048 bytes/workgroup (compile time only);
+ScratchWaveOffsetReg = s65535;
+
+; Optimization Report
+Intent           = SI_OPT_INTENT_UNSET
+
+; SC ML stats
+   Phase 3 VGPR = 0
+   Phase 3 SGPR = 0
+   Phase 2 Wave Size = 0
+
+; Shader Stats
+NumInst         = 60
+Phase3_VGPR     = 0
+Phase3_SGPR     = 0
+uNumVALUInst    = 25
+uNumVMemInst    = 3
+uNumDSInst      = 4
+uNumExportInst  = 0
+uNumCFlowInst   = 17
+uNumBranchInst   = 5
+uNumSALUInst    = 11
+uNumSMemInst    = 0
+uNumInterpInst  = 0
+uNumTransInst   = 0
+uNumAtomicOper    = 0
+uNumLocalAtomicOper    = 2
+uNumGlobalAtomicOper    = 0
+uNumLocalLoads    = 2
+uNumGlobalLoads    = 2
+uNumLocalStores    = 0
+uNumGlobalStores    = 1
+uNumWait    = 6
+uNumTexReads    = 0
+uNumTexWrites    = 0
+uNumTexAtomics   = 0
+uNumF16Inst    = 0
+uNumF32Inst    = 0
+uNumFpInst    = 0
+uNumInt16Inst    = 0
+uNumInt32Inst    = 13
+uNumIntInst    = 13
+uNumCompilerSpills   = 0
+uNumCompilerVectorSpills    = 0
+uNumCompilerScalarSpills    = 0
+numActiveWaveCount      = 0
+numDuplicatedVALUCount  = 0
+numDuplicatedVMemCount  = 0
+numAsVALUCount          = 0
+numAsVMemCount          = 0
+uNumPositionExports     = 0
+uNumParameterExports    = 0
+numTotalInstIR          = 0
+costTotalInstIR         = 0
+numVectorInstIR         = 0
+costVectorInstIR        = 0
+numScalarInstIR         = 0
+costScalarInstIR        = 0
+numUniformInstIR        = 0
+costUniformInstIR       = 0
+numVMemInstIR           = 0
+costVMemInstIR          = 0
+numVALUInstIR           = 0
+costVALUInstIR          = 0
+numBasicBlocksIR        = 0
+costBasicBlocksIR       = 0
+numExportInstIR         = 0
+costExportInstIR        = 0
+numCFlowInstIR          = 0
+costCFlowInstIR         = 0
+numSALUInstIR           = 0
+costSALUInstIR          = 0
+numSMemInstIR           = 0
+costSMemInstIR          = 0
+uNumCreatedVGPRs        = 0
+LDSBarrierCount         = 0
+WorkgroupSize           = 0
+uNumSlowMemOps          = 0
+uNumVMemBytes           = 0
+uNumEstCycles           = 0
+uNumEstWeight           = 0
+pConfidence             = 0
+pThreshold              = 0
+modelCullingDecision    = 0
+modelWaveSizeDecision   = 0
+uNumSMovInst            = 3
+uNumVMovInst            = 4
+uNumMovInst             = 7
+uNumDualInst            = 0
+bHasUndefUsed           = false
+MemSizePerThread (dwords/thread)    =0
+; Scheduler stats
+    Total Cycles   = 7264
+    Total Stalls   = 0
+
+stackFrameSize              = 0;
+
+;COMPUTE_PGM_RSRC2       = 0x00020094
+COMPUTE_PGM_RSRC2:USER_SGPR      = 10
+COMPUTE_PGM_RSRC2:TGID_X_EN      = 1
+COMPUTE_PGM_RSRC2:LDS_SIZE       = 4
+NumThreadX                       = 256
+NumThreadY                       = 1
+NumThreadZ                       = 1
+

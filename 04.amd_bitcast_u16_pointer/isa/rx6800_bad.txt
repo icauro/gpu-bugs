@@ -1,0 +1,93 @@
+==== executable 0: ShaderProperties.cs (Executable handles following Vulkan stages:  VK_SHADER_STAGE_COMPUTE_BIT ), subgroup size 64
+numUsedVgprs: 5
+numUsedSgprs: 16
+ldsSizePerLocalWorkGroup: 65536
+ldsUsageSizeInBytes: 0
+scratchMemUsageInBytes: 0
+---- ISA.cs (Executable handles following Vulkan stages:  VK_SHADER_STAGE_COMPUTE_BIT )
+_amdgpu_cs_main:
+	s_version UC_VERSION_GFX10|UC_VERSION_W64_BIT ;  b0802004
+	s_inst_prefetch 0x3                     ;  bfa00003
+	v_lshl_add_u32 v2, s8, 6, v0            ;  d7460002 04010c08
+	s_mov_b64 s[0:1], exec                  ;  be80047e
+	v_cmpx_lt_u32_e64 v2, s6                ;  d4d1007e 00000d02
+	s_cbranch_execz _L68                    ;  bf880012
+	v_lshl_add_u32 v0, v2, 1, s2            ;  d7460000 00090302
+	v_mov_b32_sdwa v3, v0 dst_sel:DWORD dst_unused:UNUSED_PAD src0_sel:WORD_0 ;  7e0602f9 00040600
+	v_mov_b32_sdwa v4, v0 dst_sel:DWORD dst_unused:UNUSED_PAD src0_sel:WORD_1 ;  7e0802f9 00050600
+	global_load_ushort v0, v[3:4], off      ;  dc288000 007d0003
+	s_waitcnt vmcnt(0)                      ;  bf8c3f70
+	v_mov_b32_sdwa v3, v0 dst_sel:DWORD dst_unused:UNUSED_PAD src0_sel:WORD_0 ;  7e0602f9 00040600
+	v_lshlrev_b32_e32 v0, 2, v2             ;  34000482
+	v_add_co_u32 v0, vcc_lo, s4, v0         ;  d70f6a00 00020004
+	v_add_co_ci_u32_e64 v1, vcc_lo, s5, 0, vcc_lo ;  d5286a01 01a90005
+	global_store_dword v[0:1], v3, off      ;  dc708000 007d0300
+_L68:
+	s_endpgm                                ;  bf810000
+	s_code_end                              ;  bf9f0000
+	s_code_end                              ;  bf9f0000
+	s_code_end                              ;  bf9f0000
+	s_code_end                              ;  bf9f0000
+	s_code_end                              ;  bf9f0000
+	s_code_end                              ;  bf9f0000
+	s_code_end                              ;  bf9f0000
+	s_code_end                              ;  bf9f0000
+	s_code_end                              ;  bf9f0000
+	s_code_end                              ;  bf9f0000
+	s_code_end                              ;  bf9f0000
+	s_code_end                              ;  bf9f0000
+	s_code_end                              ;  bf9f0000
+	s_code_end                              ;  bf9f0000
+	s_code_end                              ;  bf9f0000
+	s_code_end                              ;  bf9f0000
+	s_code_end                              ;  bf9f0000
+	s_code_end                              ;  bf9f0000
+	s_code_end                              ;  bf9f0000
+	s_code_end                              ;  bf9f0000
+	s_code_end                              ;  bf9f0000
+	s_code_end                              ;  bf9f0000
+	s_code_end                              ;  bf9f0000
+	s_code_end                              ;  bf9f0000
+	s_code_end                              ;  bf9f0000
+	s_code_end                              ;  bf9f0000
+	s_code_end                              ;  bf9f0000
+	s_code_end                              ;  bf9f0000
+	s_code_end                              ;  bf9f0000
+	s_code_end                              ;  bf9f0000
+	s_code_end                              ;  bf9f0000
+	s_code_end                              ;  bf9f0000
+	s_code_end                              ;  bf9f0000
+	s_code_end                              ;  bf9f0000
+	s_code_end                              ;  bf9f0000
+	s_code_end                              ;  bf9f0000
+	s_code_end                              ;  bf9f0000
+	s_code_end                              ;  bf9f0000
+	s_code_end                              ;  bf9f0000
+	s_code_end                              ;  bf9f0000
+	s_code_end                              ;  bf9f0000
+	s_code_end                              ;  bf9f0000
+	s_code_end                              ;  bf9f0000
+	s_code_end                              ;  bf9f0000
+	s_code_end                              ;  bf9f0000
+	s_code_end                              ;  bf9f0000
+	s_code_end                              ;  bf9f0000
+	s_code_end                              ;  bf9f0000
+	s_code_end                              ;  bf9f0000
+	s_code_end                              ;  bf9f0000
+	s_code_end                              ;  bf9f0000
+	s_code_end                              ;  bf9f0000
+	s_code_end                              ;  bf9f0000
+	s_code_end                              ;  bf9f0000
+	s_code_end                              ;  bf9f0000
+	s_code_end                              ;  bf9f0000
+	s_code_end                              ;  bf9f0000
+	s_code_end                              ;  bf9f0000
+	s_code_end                              ;  bf9f0000
+	s_code_end                              ;  bf9f0000
+	s_code_end                              ;  bf9f0000
+	s_code_end                              ;  bf9f0000
+	s_code_end                              ;  bf9f0000
+	s_code_end                              ;  bf9f0000
+
+---- ELF.cs (Executable handles following Vulkan stages:  VK_SHADER_STAGE_COMPUTE_BIT )
+<binary, 9097 bytes>

@@ -1,0 +1,160 @@
+; SPIR-V
+; Version: 1.6
+; Generator: Google spiregg; 0
+; Bound: 107
+; Schema: 0
+               OpCapability Shader
+               OpCapability GroupNonUniform
+               OpCapability Int64
+               OpCapability PhysicalStorageBufferAddresses
+               OpMemoryModel PhysicalStorageBuffer64 GLSL450
+               OpEntryPoint GLCompute %cs_main "cs_main" %gl_WorkGroupID %gl_LocalInvocationIndex %SubgroupSize %SubgroupLocalInvocationId %push %g_slots %g_shared
+               OpExecutionMode %cs_main LocalSize 256 1 1
+               OpSource HLSL 660
+               OpName %type_PushConstant_Push "type.PushConstant.Push"
+               OpMemberName %type_PushConstant_Push 0 "input"
+               OpMemberName %type_PushConstant_Push 1 "flags"
+               OpMemberName %type_PushConstant_Push 2 "output"
+               OpMemberName %type_PushConstant_Push 3 "rounds"
+               OpMemberName %type_PushConstant_Push 4 "passes"
+               OpName %push "push"
+               OpName %g_slots "g_slots"
+               OpName %g_shared "g_shared"
+               OpName %cs_main "cs_main"
+               OpDecorate %gl_WorkGroupID BuiltIn WorkgroupId
+               OpDecorate %gl_LocalInvocationIndex BuiltIn LocalInvocationIndex
+               OpDecorate %SubgroupSize BuiltIn SubgroupSize
+               OpDecorate %SubgroupLocalInvocationId BuiltIn SubgroupLocalInvocationId
+               OpMemberDecorate %type_PushConstant_Push 0 Offset 0
+               OpMemberDecorate %type_PushConstant_Push 1 Offset 8
+               OpMemberDecorate %type_PushConstant_Push 2 Offset 16
+               OpMemberDecorate %type_PushConstant_Push 3 Offset 24
+               OpMemberDecorate %type_PushConstant_Push 4 Offset 28
+               OpDecorate %type_PushConstant_Push Block
+        %int = OpTypeInt 32 1
+      %int_0 = OpConstant %int 0
+       %uint = OpTypeInt 32 0
+   %uint_256 = OpConstant %uint 256
+     %uint_4 = OpConstant %uint 4
+      %int_1 = OpConstant %int 1
+     %uint_0 = OpConstant %uint 0
+      %int_4 = OpConstant %int 4
+      %int_3 = OpConstant %int 3
+     %uint_1 = OpConstant %uint 1
+    %uint_64 = OpConstant %uint 64
+      %int_2 = OpConstant %int 2
+     %uint_8 = OpConstant %uint 8
+     %uint_3 = OpConstant %uint 3
+   %uint_264 = OpConstant %uint 264
+      %ulong = OpTypeInt 64 0
+%type_PushConstant_Push = OpTypeStruct %ulong %ulong %ulong %uint %uint
+%_ptr_PushConstant_type_PushConstant_Push = OpTypePointer PushConstant %type_PushConstant_Push
+%_arr_uint_uint_256 = OpTypeArray %uint %uint_256
+%_ptr_Workgroup__arr_uint_uint_256 = OpTypePointer Workgroup %_arr_uint_uint_256
+     %v3uint = OpTypeVector %uint 3
+%_ptr_Input_v3uint = OpTypePointer Input %v3uint
+%_ptr_Input_uint = OpTypePointer Input %uint
+       %void = OpTypeVoid
+         %33 = OpTypeFunction %void
+%_ptr_PushConstant_ulong = OpTypePointer PushConstant %ulong
+%_ptr_PhysicalStorageBuffer_uint = OpTypePointer PhysicalStorageBuffer %uint
+%_ptr_PushConstant_uint = OpTypePointer PushConstant %uint
+       %bool = OpTypeBool
+%_ptr_Workgroup_uint = OpTypePointer Workgroup %uint
+     %uint_2 = OpConstant %uint 2
+     %v2uint = OpTypeVector %uint 2
+%_ptr_PhysicalStorageBuffer_v2uint = OpTypePointer PhysicalStorageBuffer %v2uint
+       %push = OpVariable %_ptr_PushConstant_type_PushConstant_Push PushConstant
+    %g_slots = OpVariable %_ptr_Workgroup__arr_uint_uint_256 Workgroup
+   %g_shared = OpVariable %_ptr_Workgroup__arr_uint_uint_256 Workgroup
+%gl_WorkGroupID = OpVariable %_ptr_Input_v3uint Input
+%gl_LocalInvocationIndex = OpVariable %_ptr_Input_uint Input
+%SubgroupSize = OpVariable %_ptr_Input_uint Input
+%SubgroupLocalInvocationId = OpVariable %_ptr_Input_uint Input
+    %cs_main = OpFunction %void None %33
+         %42 = OpLabel
+         %43 = OpLoad %uint %gl_LocalInvocationIndex
+         %44 = OpLoad %uint %SubgroupSize
+         %45 = OpLoad %uint %SubgroupLocalInvocationId
+         %46 = OpISub %uint %43 %45
+         %47 = OpAccessChain %_ptr_Input_uint %gl_WorkGroupID %int_0
+         %48 = OpLoad %uint %47
+         %49 = OpIMul %uint %48 %uint_256
+         %50 = OpAccessChain %_ptr_PushConstant_ulong %push %int_0
+         %51 = OpLoad %ulong %50
+         %52 = OpIAdd %uint %49 %43
+         %53 = OpIMul %uint %52 %uint_4
+         %54 = OpUConvert %ulong %53
+         %55 = OpIAdd %ulong %51 %54
+         %56 = OpBitcast %_ptr_PhysicalStorageBuffer_uint %55
+         %57 = OpLoad %uint %56 Aligned 4
+         %58 = OpAccessChain %_ptr_PushConstant_ulong %push %int_1
+         %59 = OpLoad %ulong %58
+         %60 = OpIAdd %uint %49 %46
+         %61 = OpIMul %uint %60 %uint_4
+         %62 = OpUConvert %ulong %61
+         %63 = OpIAdd %ulong %59 %62
+         %64 = OpBitcast %_ptr_PhysicalStorageBuffer_uint %63
+         %65 = OpLoad %uint %64 Aligned 4
+               OpBranch %66
+         %66 = OpLabel
+         %67 = OpPhi %uint %57 %42 %68 %69
+         %70 = OpPhi %uint %uint_0 %42 %71 %69
+         %72 = OpAccessChain %_ptr_PushConstant_uint %push %int_4
+         %73 = OpLoad %uint %72
+         %74 = OpULessThan %bool %70 %73
+               OpLoopMerge %75 %69 None
+               OpBranchConditional %74 %76 %75
+         %76 = OpLabel
+         %77 = OpINotEqual %bool %65 %uint_0
+               OpSelectionMerge %78 None
+               OpBranchConditional %77 %79 %78
+         %79 = OpLabel
+               OpBranch %80
+         %80 = OpLabel
+         %81 = OpPhi %uint %67 %79 %82 %83
+         %84 = OpPhi %uint %uint_0 %79 %85 %83
+         %86 = OpAccessChain %_ptr_PushConstant_uint %push %int_3
+         %87 = OpLoad %uint %86
+         %88 = OpULessThan %bool %84 %87
+               OpLoopMerge %89 %83 None
+               OpBranchConditional %88 %83 %89
+         %83 = OpLabel
+         %90 = OpAccessChain %_ptr_Workgroup_uint %g_slots %43
+               OpStore %90 %81
+               OpMemoryBarrier %uint_3 %uint_264
+         %91 = OpBitwiseXor %uint %43 %uint_1
+         %92 = OpAccessChain %_ptr_Workgroup_uint %g_slots %91
+         %93 = OpLoad %uint %92
+         %82 = OpIAdd %uint %93 %uint_1
+               OpMemoryBarrier %uint_3 %uint_264
+         %85 = OpIAdd %uint %84 %uint_1
+               OpBranch %80
+         %89 = OpLabel
+               OpBranch %78
+         %78 = OpLabel
+         %94 = OpPhi %uint %67 %76 %81 %89
+         %95 = OpAccessChain %_ptr_Workgroup_uint %g_shared %43
+               OpStore %95 %94
+               OpControlBarrier %uint_2 %uint_2 %uint_264
+         %96 = OpIAdd %uint %43 %uint_64
+         %97 = OpUMod %uint %96 %uint_256
+         %98 = OpAccessChain %_ptr_Workgroup_uint %g_shared %97
+         %99 = OpLoad %uint %98
+         %68 = OpIAdd %uint %94 %99
+               OpControlBarrier %uint_2 %uint_2 %uint_264
+               OpBranch %69
+         %69 = OpLabel
+         %71 = OpIAdd %uint %70 %uint_1
+               OpBranch %66
+         %75 = OpLabel
+        %100 = OpAccessChain %_ptr_PushConstant_ulong %push %int_2
+        %101 = OpLoad %ulong %100
+        %102 = OpIMul %uint %52 %uint_8
+        %103 = OpUConvert %ulong %102
+        %104 = OpIAdd %ulong %101 %103
+        %105 = OpCompositeConstruct %v2uint %67 %44
+        %106 = OpBitcast %_ptr_PhysicalStorageBuffer_v2uint %104
+               OpStore %106 %105 Aligned 8
+               OpReturn
+               OpFunctionEnd

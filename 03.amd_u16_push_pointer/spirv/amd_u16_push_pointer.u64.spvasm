@@ -1,0 +1,68 @@
+; SPIR-V
+; Version: 1.6
+; Generator: Khronos Slang Compiler; 0
+; Bound: 40
+; Schema: 0
+               OpCapability PhysicalStorageBufferAddresses
+               OpCapability Int64
+               OpCapability Int16
+               OpCapability Shader
+               OpExtension "SPV_KHR_physical_storage_buffer"
+               OpMemoryModel PhysicalStorageBuffer64 GLSL450
+               OpEntryPoint GLCompute %cs_main "cs_main" %push %gl_GlobalInvocationID
+               OpExecutionMode %cs_main LocalSize 64 1 1
+               OpSource Slang 1
+               OpName %id "id"
+               OpName %s "s"
+               OpName %Push_natural "Push_natural"
+               OpMemberName %Push_natural 0 "output"
+               OpMemberName %Push_natural 1 "weights"
+               OpName %push "push"
+               OpName %w "w"
+               OpName %cs_main "cs_main"
+               OpDecorate %gl_GlobalInvocationID BuiltIn GlobalInvocationId
+               OpDecorate %_ptr_PhysicalStorageBuffer_float ArrayStride 4
+               OpDecorate %Push_natural Block
+               OpMemberDecorate %Push_natural 0 Offset 0
+               OpMemberDecorate %Push_natural 1 Offset 8
+               OpDecorate %_ptr_PhysicalStorageBuffer_ushort ArrayStride 2
+       %void = OpTypeVoid
+          %3 = OpTypeFunction %void
+       %uint = OpTypeInt 32 0
+     %v3uint = OpTypeVector %uint 3
+%_ptr_Input_v3uint = OpTypePointer Input %v3uint
+    %uint_64 = OpConstant %uint 64
+      %float = OpTypeFloat 32
+%_ptr_PhysicalStorageBuffer_float = OpTypePointer PhysicalStorageBuffer %float
+      %ulong = OpTypeInt 64 0
+%Push_natural = OpTypeStruct %_ptr_PhysicalStorageBuffer_float %ulong
+%_ptr_PushConstant_Push_natural = OpTypePointer PushConstant %Push_natural
+        %int = OpTypeInt 32 1
+      %int_1 = OpConstant %int 1
+%_ptr_PushConstant_ulong = OpTypePointer PushConstant %ulong
+     %uint_2 = OpConstant %uint 2
+     %ushort = OpTypeInt 16 0
+%_ptr_PhysicalStorageBuffer_ushort = OpTypePointer PhysicalStorageBuffer %ushort
+      %int_0 = OpConstant %int 0
+%_ptr_PushConstant__ptr_PhysicalStorageBuffer_float = OpTypePointer PushConstant %_ptr_PhysicalStorageBuffer_float
+%gl_GlobalInvocationID = OpVariable %_ptr_Input_v3uint Input
+       %push = OpVariable %_ptr_PushConstant_Push_natural PushConstant
+    %cs_main = OpFunction %void None %3
+          %4 = OpLabel
+          %7 = OpLoad %v3uint %gl_GlobalInvocationID
+         %id = OpCompositeExtract %uint %7 0
+          %s = OpUMod %uint %id %uint_64
+         %22 = OpAccessChain %_ptr_PushConstant_ulong %push %int_1
+         %23 = OpLoad %ulong %22
+         %24 = OpIMul %uint %s %uint_2
+         %26 = OpUConvert %ulong %24
+         %27 = OpIAdd %ulong %23 %26
+         %30 = OpConvertUToPtr %_ptr_PhysicalStorageBuffer_ushort %27
+         %31 = OpLoad %ushort %30 Aligned 2
+          %w = OpConvertUToF %float %31
+         %35 = OpAccessChain %_ptr_PushConstant__ptr_PhysicalStorageBuffer_float %push %int_0
+         %36 = OpLoad %_ptr_PhysicalStorageBuffer_float %35
+         %37 = OpPtrAccessChain %_ptr_PhysicalStorageBuffer_float %36 %id
+               OpStore %37 %w Aligned 4
+               OpReturn
+               OpFunctionEnd

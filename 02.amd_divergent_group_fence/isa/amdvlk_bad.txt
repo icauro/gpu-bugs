@@ -1,0 +1,73 @@
+==== executable 0: ShaderProperties.cs (Executable handles following Vulkan stages:  VK_SHADER_STAGE_COMPUTE_BIT ), subgroup size 256
+numUsedVgprs: 8
+numUsedSgprs: 14
+ldsSizePerLocalWorkGroup: 65536
+ldsUsageSizeInBytes: 2048
+scratchMemUsageInBytes: 0
+---- ISA.cs (Executable handles following Vulkan stages:  VK_SHADER_STAGE_COMPUTE_BIT )
+_amdgpu_cs_main:
+BB0_0:
+	v_lshl_add_u32 v2, s9, 8, v0                                                                     ; D1FD0002 04011009
+	s_mov_b32 s11, s2                                                                                ; BE8B0002
+	s_mov_b32 s10, s1                                                                                ; BE8A0001
+	v_lshlrev_b32_e32 v1, 2, v2                                                                      ; 24020482
+	global_load_dword v1, v1, s[10:11]                                                               ; DC508000 010A0001
+	s_mov_b32 s1, s6                                                                                 ; BE810006
+	s_mov_b32 s0, s5                                                                                 ; BE800005
+	s_cmp_eq_u32 s8, 0                                                                               ; BF068008
+	s_mov_b32 s6, 0                                                                                  ; BE860080
+	s_cbranch_scc1 .LBB0_6                                                                           ; BF850000
+	v_mbcnt_lo_u32_b32 v3, -1, 0                                                                     ; D28C0003 000100C1
+	v_mbcnt_hi_u32_b32 v3, -1, v3                                                                    ; D28D0003 000206C1
+	v_sub_u32_e32 v3, v2, v3                                                                         ; 6A060702
+	s_mov_b32 s5, s4                                                                                 ; BE850004
+	s_mov_b32 s4, s3                                                                                 ; BE840003
+	v_lshlrev_b32_e32 v3, 2, v3                                                                      ; 24060682
+	global_load_dword v5, v3, s[4:5]                                                                 ; DC508000 05040003
+	s_cmp_lg_u32 s7, 0                                                                               ; BF078007
+	v_lshlrev_b32_e32 v3, 2, v0                                                                      ; 24060082
+	s_movk_i32 s4, 0x400                                                                             ; B0040400
+	v_xor_b32_e32 v4, 1, v0                                                                          ; 2A080081
+	v_add_u32_e32 v6, 64, v0                                                                         ; 680C00C0
+	v_mov_b32_e32 v7, 2                                                                              ; 7E0E0282
+	s_cselect_b64 s[2:3], -1, 0                                                                      ; 858280C1
+	v_add_u32_e32 v0, 0x400, v3                                                                      ; 680006FF 00000400
+	v_lshl_add_u32 v4, v4, 2, s4                                                                     ; D1FD0004 00110504
+	s_waitcnt vmcnt(0)                                                                               ; BF8C0F70
+	v_cmp_ne_u32_e32 vcc, 0, v5                                                                      ; 7D9A0A80
+	v_lshlrev_b32_sdwa v5, v7, v6 dst_sel:DWORD dst_unused:UNUSED_PAD src0_sel:DWORD src1_sel:BYTE_0 ; 240A0CF9 00060607
+	s_and_b64 s[2:3], vcc, s[2:3]                                                                    ; 8682026A
+	s_branch .LBB0_3                                                                                 ; BF820000
+BB0_2:
+	s_or_b64 exec, exec, s[4:5]                                                                      ; 87FE047E
+	ds_write_b32 v3, v1                                                                              ; D81A0000 00000103
+	s_waitcnt lgkmcnt(0)                                                                             ; BF8CC07F
+	s_barrier                                                                                        ; BF8A0000
+	ds_read_b32 v6, v5                                                                               ; D86C0000 06000005
+	s_add_i32 s6, s6, 1                                                                              ; 81068106
+	s_cmp_lg_u32 s6, s8                                                                              ; BF070806
+	s_waitcnt lgkmcnt(0)                                                                             ; BF8CC07F
+	s_barrier                                                                                        ; BF8A0000
+	v_add_u32_e32 v1, v6, v1                                                                         ; 68020306
+	s_cbranch_scc0 .LBB0_6                                                                           ; BF840000
+BB0_3:
+	s_and_saveexec_b64 s[4:5], s[2:3]                                                                ; BE842002
+	s_cbranch_execz .LBB0_2                                                                          ; BF880000
+	s_mov_b32 s9, s7                                                                                 ; BE890007
+BB0_5:
+	ds_write_b32 v0, v1                                                                              ; D81A0000 00000100
+	s_waitcnt lgkmcnt(0)                                                                             ; BF8CC07F
+	ds_read_b32 v1, v4                                                                               ; D86C0000 01000004
+	s_add_i32 s9, s9, -1                                                                             ; 8109C109
+	s_cmp_lg_u32 s9, 0                                                                               ; BF078009
+	s_waitcnt lgkmcnt(0)                                                                             ; BF8CC07F
+	v_add_u32_e32 v1, 1, v1                                                                          ; 68020281
+	s_cbranch_scc1 .LBB0_5                                                                           ; BF850000
+	s_branch .LBB0_2                                                                                 ; BF820000
+BB0_6:
+	v_lshlrev_b32_e32 v0, 3, v2                                                                      ; 24000483
+	v_mov_b32_e32 v2, 64                                                                             ; 7E0402C0
+	s_waitcnt vmcnt(0)                                                                               ; BF8C0F70
+	global_store_dwordx2 v0, v[1:2], s[0:1]                                                          ; DC748000 00000100
+	s_endpgm                                                                                         ; BF810000
+

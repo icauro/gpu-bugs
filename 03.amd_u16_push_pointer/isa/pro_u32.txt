@@ -1,0 +1,152 @@
+==== executable 0: ShaderProperties.cs (Executable handles following Vulkan stages:  VK_SHADER_STAGE_COMPUTE_BIT ), subgroup size 64
+numUsedVgprs: 3
+numUsedSgprs: 9
+ldsSizePerLocalWorkGroup: 65536
+ldsUsageSizeInBytes: 0
+scratchMemUsageInBytes: 0
+---- ISA.cs (Executable handles following Vulkan stages:  VK_SHADER_STAGE_COMPUTE_BIT )
+; -------- Disassembly --------------------
+shader main
+  asic(GFX9)
+  type(CS)
+
+  v_lshl_add_u32  v0, s6, 6, v0                         // 000000000000: D1FD0000 04010C06
+  v_and_b32     v1, 63, v0                              // 000000000008: 260200BF
+  v_lshrrev_b32  v1, 1, v1                              // 00000000000C: 20020281
+  v_lshlrev_b32  v1, 2, v1                              // 000000000010: 24020282
+  global_load_dword  v1, v[1:2], s[4:5]                 // 000000000014: DC508000 01040001
+  v_and_b32     v2, 1, v0                               // 00000000001C: 26040081
+  v_lshlrev_b32  v2, 4, v2                              // 000000000020: 24040484
+  s_waitcnt     vmcnt(0)                                // 000000000024: BF8C0F70
+  v_lshrrev_b32  v1, v2, v1                             // 000000000028: 20020302
+  v_cvt_f32_u32  v1, v1 src0_sel: WORD_0                // 00000000002C: 7E020CF9 00040601
+  v_lshlrev_b32  v0, 2, v0                              // 000000000034: 24000082
+  global_store_dword  v[0:1], v1, s[2:3]                // 000000000038: DC708000 00020100
+  s_endpgm                                              // 000000000040: BF810000
+end
+
+; ----------------- CS Data ------------------------
+
+codeLenInByte        = 68 bytes;
+pm4CrcCodeLength     = 68 bytes;
+pm4Crc               = b917a213e10586da
+
+; launchModeFlags    = 0x00000400
+externalLogicalBinding = TRUE;
+
+userElementCount     = 0;
+extUserElementCount  = 0;
+NumVgprs             = 3;
+maxVgprs             = 256;
+NumSgprs             = 9;
+maxSgprs             = 102;
+FloatMode            = 192;
+IeeeMode             = 0;
+FlatPtr32            = 0;
+IsDynamicCallStack   = 0;
+MemOrdered           = 0;
+ScratchSize          = 0 dwords/thread;
+LDSByteSize          = 0 bytes/workgroup (compile time only);
+ScratchWaveOffsetReg = s65535;
+
+; Optimization Report
+Intent           = SI_OPT_INTENT_UNSET
+
+; SC ML stats
+   Phase 3 VGPR = 0
+   Phase 3 SGPR = 0
+   Phase 2 Wave Size = 0
+
+; Shader Stats
+NumInst         = 13
+Phase3_VGPR     = 0
+Phase3_SGPR     = 0
+uNumVALUInst    = 9
+uNumVMemInst    = 2
+uNumDSInst      = 0
+uNumExportInst  = 0
+uNumCFlowInst   = 2
+uNumBranchInst   = 0
+uNumSALUInst    = 0
+uNumSMemInst    = 0
+uNumInterpInst  = 0
+uNumTransInst   = 0
+uNumAtomicOper    = 0
+uNumLocalAtomicOper    = 0
+uNumGlobalAtomicOper    = 0
+uNumLocalLoads    = 0
+uNumGlobalLoads    = 1
+uNumLocalStores    = 0
+uNumGlobalStores    = 1
+uNumWait    = 1
+uNumTexReads    = 0
+uNumTexWrites    = 0
+uNumTexAtomics   = 0
+uNumF16Inst    = 0
+uNumF32Inst    = 0
+uNumFpInst    = 0
+uNumInt16Inst    = 0
+uNumInt32Inst    = 2
+uNumIntInst    = 2
+uNumCompilerSpills   = 0
+uNumCompilerVectorSpills    = 0
+uNumCompilerScalarSpills    = 0
+numActiveWaveCount      = 0
+numDuplicatedVALUCount  = 0
+numDuplicatedVMemCount  = 0
+numAsVALUCount          = 0
+numAsVMemCount          = 0
+uNumPositionExports     = 0
+uNumParameterExports    = 0
+numTotalInstIR          = 0
+costTotalInstIR         = 0
+numVectorInstIR         = 0
+costVectorInstIR        = 0
+numScalarInstIR         = 0
+costScalarInstIR        = 0
+numUniformInstIR        = 0
+costUniformInstIR       = 0
+numVMemInstIR           = 0
+costVMemInstIR          = 0
+numVALUInstIR           = 0
+costVALUInstIR          = 0
+numBasicBlocksIR        = 0
+costBasicBlocksIR       = 0
+numExportInstIR         = 0
+costExportInstIR        = 0
+numCFlowInstIR          = 0
+costCFlowInstIR         = 0
+numSALUInstIR           = 0
+costSALUInstIR          = 0
+numSMemInstIR           = 0
+costSMemInstIR          = 0
+uNumCreatedVGPRs        = 0
+LDSBarrierCount         = 0
+WorkgroupSize           = 0
+uNumSlowMemOps          = 0
+uNumVMemBytes           = 0
+uNumEstCycles           = 0
+uNumEstWeight           = 0
+pConfidence             = 0
+pThreshold              = 0
+modelCullingDecision    = 0
+modelWaveSizeDecision   = 0
+uNumSMovInst            = 0
+uNumVMovInst            = 0
+uNumMovInst             = 0
+uNumDualInst            = 0
+bHasUndefUsed           = false
+MemSizePerThread (dwords/thread)    =0
+; Scheduler stats
+    Total Cycles   = 368
+    Total Stalls   = 16
+
+stackFrameSize              = 0;
+
+;COMPUTE_PGM_RSRC2       = 0x0000008C
+COMPUTE_PGM_RSRC2:USER_SGPR      = 6
+COMPUTE_PGM_RSRC2:TGID_X_EN      = 1
+NumThreadX                       = 64
+NumThreadY                       = 1
+NumThreadZ                       = 1
+

@@ -1,0 +1,324 @@
+; SPIR-V
+; Version: 1.6
+; Generator: Google spiregg; 0
+; Bound: 223
+; Schema: 0
+               OpCapability Shader
+               OpCapability PhysicalStorageBufferAddresses
+               OpCapability Int64
+          %1 = OpExtInstImport "GLSL.std.450"
+               OpMemoryModel PhysicalStorageBuffer64 GLSL450
+               OpEntryPoint GLCompute %cs_main "cs_main" %gl_GlobalInvocationID %push
+               OpExecutionMode %cs_main LocalSize 64 1 1
+               OpSource HLSL 660
+               OpName %type_PushConstant_Push "type.PushConstant.Push"
+               OpMemberName %type_PushConstant_Push 0 "volume"
+               OpMemberName %type_PushConstant_Push 1 "points"
+               OpMemberName %type_PushConstant_Push 2 "output"
+               OpMemberName %type_PushConstant_Push 3 "count"
+               OpName %Volume "Volume"
+               OpMemberName %Volume 0 "states"
+               OpMemberName %Volume 1 "irradiance"
+               OpMemberName %Volume 2 "offsets"
+               OpMemberName %Volume 3 "counts"
+               OpMemberName %Volume 4 "spacing"
+               OpName %push "push"
+               OpName %cs_main "cs_main"
+               OpName %param_var_id "param.var.id"
+               OpName %src_cs_main "src.cs_main"
+               OpName %id "id"
+               OpName %bb_entry "bb.entry"
+               OpName %Volume_0 "Volume"
+               OpMemberName %Volume_0 0 "states"
+               OpMemberName %Volume_0 1 "irradiance"
+               OpMemberName %Volume_0 2 "offsets"
+               OpMemberName %Volume_0 3 "counts"
+               OpMemberName %Volume_0 4 "spacing"
+               OpName %v "v"
+               OpName %at "at"
+               OpName %cell "cell"
+               OpName %base "base"
+               OpName %t "t"
+               OpName %sum "sum"
+               OpName %total "total"
+               OpName %corner "corner"
+               OpName %offset "offset"
+               OpName %probe3 "probe3"
+               OpName %probe "probe"
+               OpName %state "state"
+               OpName %w3 "w3"
+               OpName %weight "weight"
+               OpName %if_true "if.true"
+               OpName %if_merge "if.merge"
+               OpName %for_check "for.check"
+               OpName %for_body "for.body"
+               OpName %if_true_0 "if.true"
+               OpName %if_merge_0 "if.merge"
+               OpName %for_continue "for.continue"
+               OpName %for_merge "for.merge"
+               OpDecorate %gl_GlobalInvocationID BuiltIn GlobalInvocationId
+               OpMemberDecorate %Volume 0 Offset 0
+               OpMemberDecorate %Volume 1 Offset 8
+               OpMemberDecorate %Volume 2 Offset 16
+               OpMemberDecorate %Volume 3 Offset 32
+               OpMemberDecorate %Volume 4 Offset 44
+               OpMemberDecorate %type_PushConstant_Push 0 Offset 0
+               OpMemberDecorate %type_PushConstant_Push 1 Offset 8
+               OpMemberDecorate %type_PushConstant_Push 2 Offset 16
+               OpMemberDecorate %type_PushConstant_Push 3 Offset 24
+               OpDecorate %type_PushConstant_Push Block
+        %int = OpTypeInt 32 1
+      %int_0 = OpConstant %int 0
+      %int_3 = OpConstant %int 3
+      %int_1 = OpConstant %int 1
+       %uint = OpTypeInt 32 0
+    %uint_16 = OpConstant %uint 16
+      %int_4 = OpConstant %int 4
+      %v3int = OpTypeVector %int 3
+         %13 = OpConstantComposite %v3int %int_0 %int_0 %int_0
+      %int_2 = OpConstant %int 2
+         %15 = OpConstantComposite %v3int %int_2 %int_2 %int_2
+      %float = OpTypeFloat 32
+    %float_0 = OpConstant %float 0
+    %v3float = OpTypeVector %float 3
+         %19 = OpConstantComposite %v3float %float_0 %float_0 %float_0
+    %float_1 = OpConstant %float 1
+         %21 = OpConstantComposite %v3float %float_1 %float_1 %float_1
+    %v4float = OpTypeVector %float 4
+         %23 = OpConstantComposite %v4float %float_0 %float_0 %float_0 %float_0
+     %uint_0 = OpConstant %uint 0
+     %uint_8 = OpConstant %uint 8
+     %uint_1 = OpConstant %uint 1
+    %uint_31 = OpConstant %uint 31
+     %uint_2 = OpConstant %uint 2
+     %uint_4 = OpConstant %uint 4
+%float_9_99999975en05 = OpConstant %float 9.99999975e-05
+%_ptr_PhysicalStorageBuffer_uint = OpTypePointer PhysicalStorageBuffer %uint
+%_ptr_PhysicalStorageBuffer_v4float = OpTypePointer PhysicalStorageBuffer %v4float
+     %v3uint = OpTypeVector %uint 3
+     %Volume = OpTypeStruct %_ptr_PhysicalStorageBuffer_uint %_ptr_PhysicalStorageBuffer_v4float %_ptr_PhysicalStorageBuffer_v4float %v3uint %float
+%_ptr_PhysicalStorageBuffer_Volume = OpTypePointer PhysicalStorageBuffer %Volume
+      %ulong = OpTypeInt 64 0
+%type_PushConstant_Push = OpTypeStruct %_ptr_PhysicalStorageBuffer_Volume %ulong %ulong %uint
+%_ptr_PushConstant_type_PushConstant_Push = OpTypePointer PushConstant %type_PushConstant_Push
+%_ptr_Input_v3uint = OpTypePointer Input %v3uint
+       %void = OpTypeVoid
+         %41 = OpTypeFunction %void
+%_ptr_Function_v3uint = OpTypePointer Function %v3uint
+         %48 = OpTypeFunction %void %_ptr_Function_v3uint
+   %Volume_0 = OpTypeStruct %_ptr_PhysicalStorageBuffer_uint %_ptr_PhysicalStorageBuffer_v4float %_ptr_PhysicalStorageBuffer_v4float %v3uint %float
+%_ptr_Function_Volume_0 = OpTypePointer Function %Volume_0
+%_ptr_Function_v3float = OpTypePointer Function %v3float
+%_ptr_Function_v3int = OpTypePointer Function %v3int
+%_ptr_Function_v4float = OpTypePointer Function %v4float
+%_ptr_Function_float = OpTypePointer Function %float
+%_ptr_Function_uint = OpTypePointer Function %uint
+%_ptr_PushConstant_uint = OpTypePointer PushConstant %uint
+       %bool = OpTypeBool
+%_ptr_PushConstant__ptr_PhysicalStorageBuffer_Volume = OpTypePointer PushConstant %_ptr_PhysicalStorageBuffer_Volume
+%_ptr_PushConstant_ulong = OpTypePointer PushConstant %ulong
+%_ptr_Function__ptr_PhysicalStorageBuffer_uint = OpTypePointer Function %_ptr_PhysicalStorageBuffer_uint
+%_ptr_Function__ptr_PhysicalStorageBuffer_v4float = OpTypePointer Function %_ptr_PhysicalStorageBuffer_v4float
+%_ptr_PhysicalStorageBuffer_float = OpTypePointer PhysicalStorageBuffer %float
+       %push = OpVariable %_ptr_PushConstant_type_PushConstant_Push PushConstant
+%gl_GlobalInvocationID = OpVariable %_ptr_Input_v3uint Input
+    %cs_main = OpFunction %void None %41
+         %42 = OpLabel
+%param_var_id = OpVariable %_ptr_Function_v3uint Function
+         %45 = OpLoad %v3uint %gl_GlobalInvocationID
+               OpStore %param_var_id %45
+         %46 = OpFunctionCall %void %src_cs_main %param_var_id
+               OpReturn
+               OpFunctionEnd
+%src_cs_main = OpFunction %void None %48
+         %id = OpFunctionParameter %_ptr_Function_v3uint
+   %bb_entry = OpLabel
+          %v = OpVariable %_ptr_Function_Volume_0 Function
+         %at = OpVariable %_ptr_Function_v3float Function
+       %cell = OpVariable %_ptr_Function_v3float Function
+       %base = OpVariable %_ptr_Function_v3int Function
+          %t = OpVariable %_ptr_Function_v3float Function
+        %sum = OpVariable %_ptr_Function_v4float Function
+      %total = OpVariable %_ptr_Function_float Function
+     %corner = OpVariable %_ptr_Function_uint Function
+     %offset = OpVariable %_ptr_Function_v3uint Function
+     %probe3 = OpVariable %_ptr_Function_v3uint Function
+      %probe = OpVariable %_ptr_Function_uint Function
+      %state = OpVariable %_ptr_Function_uint Function
+         %w3 = OpVariable %_ptr_Function_v3float Function
+     %weight = OpVariable %_ptr_Function_float Function
+         %72 = OpAccessChain %_ptr_Function_uint %id %int_0
+         %73 = OpLoad %uint %72
+         %75 = OpAccessChain %_ptr_PushConstant_uint %push %int_3
+         %76 = OpLoad %uint %75
+         %78 = OpUGreaterThanEqual %bool %73 %76
+               OpSelectionMerge %if_merge None
+               OpBranchConditional %78 %if_true %if_merge
+    %if_true = OpLabel
+               OpReturn
+   %if_merge = OpLabel
+         %82 = OpAccessChain %_ptr_PushConstant__ptr_PhysicalStorageBuffer_Volume %push %int_0
+         %83 = OpLoad %_ptr_PhysicalStorageBuffer_Volume %82
+         %84 = OpLoad %Volume %83 Aligned 16
+         %85 = OpCopyLogical %Volume_0 %84
+               OpStore %v %85
+         %87 = OpAccessChain %_ptr_PushConstant_ulong %push %int_1
+         %88 = OpLoad %ulong %87
+         %89 = OpAccessChain %_ptr_Function_uint %id %int_0
+         %90 = OpLoad %uint %89
+         %91 = OpIMul %uint %90 %uint_16
+         %92 = OpUConvert %ulong %91
+         %93 = OpIAdd %ulong %88 %92
+         %94 = OpBitcast %_ptr_PhysicalStorageBuffer_v4float %93
+         %95 = OpLoad %v4float %94 Aligned 16
+         %96 = OpVectorShuffle %v3float %95 %95 0 1 2
+               OpStore %at %96
+         %97 = OpLoad %v3float %at
+         %98 = OpAccessChain %_ptr_Function_float %v %int_4
+         %99 = OpLoad %float %98
+        %100 = OpCompositeConstruct %v3float %99 %99 %99
+        %101 = OpFDiv %v3float %97 %100
+               OpStore %cell %101
+        %102 = OpLoad %v3float %cell
+        %103 = OpExtInst %v3float %1 Floor %102
+        %104 = OpConvertFToS %v3int %103
+        %105 = OpAccessChain %_ptr_Function_v3uint %v %int_3
+        %106 = OpLoad %v3uint %105
+        %107 = OpBitcast %v3int %106
+        %108 = OpISub %v3int %107 %15
+        %109 = OpExtInst %v3int %1 SClamp %104 %13 %108
+               OpStore %base %109
+        %110 = OpLoad %v3float %cell
+        %111 = OpLoad %v3int %base
+        %112 = OpConvertSToF %v3float %111
+        %113 = OpFSub %v3float %110 %112
+        %114 = OpExtInst %v3float %1 FClamp %113 %19 %21
+               OpStore %t %114
+               OpStore %sum %23
+               OpStore %total %float_0
+               OpStore %corner %uint_0
+               OpBranch %for_check
+  %for_check = OpLabel
+        %116 = OpLoad %uint %corner
+        %117 = OpULessThan %bool %116 %uint_8
+               OpLoopMerge %for_merge %for_continue None
+               OpBranchConditional %117 %for_body %for_merge
+   %for_body = OpLabel
+        %121 = OpLoad %uint %corner
+        %122 = OpBitwiseAnd %uint %121 %uint_1
+        %123 = OpLoad %uint %corner
+        %124 = OpBitwiseAnd %uint %uint_1 %uint_31
+        %125 = OpShiftRightLogical %uint %123 %124
+        %126 = OpBitwiseAnd %uint %125 %uint_1
+        %127 = OpLoad %uint %corner
+        %128 = OpBitwiseAnd %uint %uint_2 %uint_31
+        %129 = OpShiftRightLogical %uint %127 %128
+        %130 = OpCompositeConstruct %v3uint %122 %126 %129
+               OpStore %offset %130
+        %131 = OpLoad %v3int %base
+        %132 = OpBitcast %v3uint %131
+        %133 = OpLoad %v3uint %offset
+        %134 = OpIAdd %v3uint %132 %133
+               OpStore %probe3 %134
+        %135 = OpAccessChain %_ptr_Function_uint %probe3 %int_0
+        %136 = OpLoad %uint %135
+        %137 = OpAccessChain %_ptr_Function_v3uint %v %int_3
+        %138 = OpAccessChain %_ptr_Function_uint %137 %int_0
+        %139 = OpLoad %uint %138
+        %140 = OpAccessChain %_ptr_Function_uint %probe3 %int_1
+        %141 = OpLoad %uint %140
+        %142 = OpAccessChain %_ptr_Function_v3uint %v %int_3
+        %143 = OpAccessChain %_ptr_Function_uint %142 %int_1
+        %144 = OpLoad %uint %143
+        %145 = OpAccessChain %_ptr_Function_uint %probe3 %int_2
+        %146 = OpLoad %uint %145
+        %147 = OpIMul %uint %144 %146
+        %148 = OpIAdd %uint %141 %147
+        %149 = OpIMul %uint %139 %148
+        %150 = OpIAdd %uint %136 %149
+               OpStore %probe %150
+        %152 = OpAccessChain %_ptr_Function__ptr_PhysicalStorageBuffer_uint %v %int_0
+        %153 = OpLoad %_ptr_PhysicalStorageBuffer_uint %152
+        %154 = OpConvertPtrToU %ulong %153
+        %155 = OpLoad %uint %probe
+        %156 = OpIMul %uint %155 %uint_4
+        %157 = OpUConvert %ulong %156
+        %158 = OpIAdd %ulong %154 %157
+        %159 = OpConvertUToPtr %_ptr_PhysicalStorageBuffer_uint %158
+        %160 = OpLoad %uint %159 Aligned 4
+               OpStore %state %160
+        %161 = OpLoad %uint %state
+        %162 = OpIEqual %bool %161 %uint_0
+               OpSelectionMerge %if_merge_0 None
+               OpBranchConditional %162 %if_true_0 %if_merge_0
+  %if_true_0 = OpLabel
+               OpBranch %for_continue
+ %if_merge_0 = OpLabel
+        %165 = OpLoad %v3float %t
+        %166 = OpFSub %v3float %21 %165
+        %167 = OpLoad %v3float %t
+        %168 = OpLoad %v3uint %offset
+        %169 = OpConvertUToF %v3float %168
+        %170 = OpExtInst %v3float %1 FMix %166 %167 %169
+               OpStore %w3 %170
+        %171 = OpAccessChain %_ptr_Function_float %w3 %int_0
+        %172 = OpLoad %float %171
+        %173 = OpAccessChain %_ptr_Function_float %w3 %int_1
+        %174 = OpLoad %float %173
+        %175 = OpFMul %float %172 %174
+        %176 = OpAccessChain %_ptr_Function_float %w3 %int_2
+        %177 = OpLoad %float %176
+        %178 = OpFMul %float %175 %177
+        %180 = OpAccessChain %_ptr_Function__ptr_PhysicalStorageBuffer_v4float %v %int_2
+        %181 = OpLoad %_ptr_PhysicalStorageBuffer_v4float %180
+        %182 = OpConvertPtrToU %ulong %181
+        %183 = OpLoad %uint %probe
+        %184 = OpIMul %uint %183 %uint_16
+        %185 = OpUConvert %ulong %184
+        %186 = OpIAdd %ulong %182 %185
+        %187 = OpConvertUToPtr %_ptr_PhysicalStorageBuffer_v4float %186
+        %189 = OpAccessChain %_ptr_PhysicalStorageBuffer_float %187 %int_3
+        %190 = OpLoad %float %189 Aligned 4
+        %191 = OpFMul %float %178 %190
+               OpStore %weight %191
+        %192 = OpAccessChain %_ptr_Function__ptr_PhysicalStorageBuffer_v4float %v %int_1
+        %193 = OpLoad %_ptr_PhysicalStorageBuffer_v4float %192
+        %194 = OpConvertPtrToU %ulong %193
+        %195 = OpLoad %uint %probe
+        %196 = OpIMul %uint %195 %uint_16
+        %197 = OpUConvert %ulong %196
+        %198 = OpIAdd %ulong %194 %197
+        %199 = OpConvertUToPtr %_ptr_PhysicalStorageBuffer_v4float %198
+        %200 = OpLoad %v4float %199 Aligned 16
+        %201 = OpLoad %float %weight
+        %202 = OpVectorTimesScalar %v4float %200 %201
+        %203 = OpLoad %v4float %sum
+        %204 = OpFAdd %v4float %203 %202
+               OpStore %sum %204
+        %205 = OpLoad %float %weight
+        %206 = OpLoad %float %total
+        %207 = OpFAdd %float %206 %205
+               OpStore %total %207
+               OpBranch %for_continue
+%for_continue = OpLabel
+        %208 = OpLoad %uint %corner
+        %209 = OpIAdd %uint %208 %uint_1
+               OpStore %corner %209
+               OpBranch %for_check
+  %for_merge = OpLabel
+        %210 = OpAccessChain %_ptr_PushConstant_ulong %push %int_2
+        %211 = OpLoad %ulong %210
+        %212 = OpAccessChain %_ptr_Function_uint %id %int_0
+        %213 = OpLoad %uint %212
+        %214 = OpIMul %uint %213 %uint_16
+        %215 = OpUConvert %ulong %214
+        %216 = OpIAdd %ulong %211 %215
+        %217 = OpLoad %v4float %sum
+        %218 = OpLoad %float %total
+        %219 = OpExtInst %float %1 NMax %218 %float_9_99999975en05
+        %220 = OpCompositeConstruct %v4float %219 %219 %219 %219
+        %221 = OpFDiv %v4float %217 %220
+        %222 = OpBitcast %_ptr_PhysicalStorageBuffer_v4float %216
+               OpStore %222 %221 Aligned 16
+               OpReturn
+               OpFunctionEnd

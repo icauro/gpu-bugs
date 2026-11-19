@@ -1,0 +1,131 @@
+==== executable 0: compute (Vulkan Compute Shader), subgroup size 64
+Driver pipeline hash: 11804586121371796864
+SGPRs: 16
+VGPRs: 8
+Spilled SGPRs: 0
+Spilled VGPRs: 0
+Code size: 88
+LDS size: 0
+Scratch size: 0
+Subgroups per SIMD: 10
+Combined inputs: 0
+Combined outputs: 0
+Hash: 1862983841
+Instructions: 17
+Copies: 3
+Branches: 0
+Latency: 692
+Inverse Throughput: 69
+VMEM Clause: 2
+SMEM Clause: 0
+Pre-Sched SGPRs: 9
+Pre-Sched VGPRs: 4
+VALU: 13
+SALU: 0
+VMEM: 2
+SMEM: 0
+VOPD: 0
+---- NIR Shader(s) (The optimized NIR shader(s))
+shader: MESA_SHADER_COMPUTE
+source_blake3: {0xba3f0660, 0x8d035dcb, 0x40217f25, 0x5628561a, 0xf2ab34cd, 0x431869bd, 0x88f990e4, 0x35a58ba1}
+name: 
+workgroup_size: 64, 1, 1
+system_values_read: 0x00000000'00000000'00008400'00000000
+api_subgroup_size: 64
+max_subgroup_size: 64
+min_subgroup_size: 64
+bit_sizes_float: 0x20
+bit_sizes_int: 0x70
+separate_shader: true
+flrp_lowered: true
+writes_memory: true
+uniforms: 16
+decl_var push_const INTERP_MODE_NONE none Push_natural push
+decl_function cs_main () (entrypoint)
+
+impl cs_main {
+    con block b0:       // preds:
+    con 32     %0 = @load_scalar_arg_amd (base=5, arg_upper_bound_u32_amd=0, arg_num_lsb_zero=0)
+    div 32     %1 = @load_vector_arg_amd (base=7, arg_upper_bound_u32_amd=63, arg_num_lsb_zero=0)
+    con 32     %2 = load_const (0x00000006)
+    con 32     %3 = ishl %0, %2 (0x6)
+    div 32     %4 = iadd %3, %1
+    con 32     %5 = @load_scalar_arg_amd (base=1, arg_upper_bound_u32_amd=0, arg_num_lsb_zero=0)
+    con 32     %6 = @load_scalar_arg_amd (base=2, arg_upper_bound_u32_amd=0, arg_num_lsb_zero=0)
+    con 32     %7 = @load_scalar_arg_amd (base=3, arg_upper_bound_u32_amd=0, arg_num_lsb_zero=0)
+    con 32     %8 = @load_scalar_arg_amd (base=4, arg_upper_bound_u32_amd=0, arg_num_lsb_zero=0)
+    con 32     %9 = load_const (0x00000001)
+    con 32    %10 = load_const (0x0000003f = 63)
+    div 32    %11 = iand %4, %10 (0x3f)
+    con 32    %12 = load_const (0x00000000)
+    div 64    %13 = pack_64_2x32_split %11, %12 (0x0)
+    div 64    %14 = ishl %13, %9 (0x1)
+    con 64    %15 = pack_64_2x32_split %7, %8
+    div 64    %16 = iadd %15, %14
+    div 16    %17 = @load_global_amd (%16, %12 (0x0)) (base=0, access=none, align_mul=2, align_offset=0)
+    con 32    %18 = load_const (0x00000002)
+    con 32    %19 = load_const (0x0000001f = 31)
+    div 32    %20 = ishr %4, %19 (0x1f)
+    div 64    %21 = pack_64_2x32_split %4, %20
+    div 64    %22 = ishl %21, %18 (0x2)
+    con 64    %23 = pack_64_2x32_split %5, %6
+    div 64    %24 = iadd %23, %22
+    div 32    %25 = u2f32 %17
+                    @store_global_amd (%25, %24, %12 (0x0)) (base=0, access=none, align_mul=4, align_offset=0, wrmask=x)
+                    // succs: b1
+    block b1:
+}
+
+
+---- ACO IR (The ACO IR after some optimizations)
+After Spilling:
+ACO shader stage: SW (CS), HW (COMPUTE_SHADER)
+BB0
+/* logical preds: / linear preds: / kind: uniform, top-level, */
+	 s2: %27:s[0-1],  s1: %28:s[2],  s1: %29:s[3],  s1: %30:s[4],  s1: %31:s[5],  s1: %32:s[6],  s1: %33:s[7],  v1: %34:v[0],  v1: (kill)%35:v[1],  v1: (kill)%36:v[2] = p_startpgm
+	 s2: (kill)%38,  s1: (kill)%37:scc = p_init_scratch (kill)%27, (lateKill)%33
+	p_logical_start
+	 v1: %5 = v_lshl_add_u32 (kill)%32, 6, (kill)%34
+	 v1: %12 = v_and_b32 63, %5
+	 v2: %14 = p_create_vector (kill)%12, 0
+	 v2: %15 = v_lshlrev_b64_e64 1, (kill)%14
+	 v1: %41 = p_parallelcopy (kill)%31
+	 v1: %42,  v1: %43 = p_split_vector (kill)%15
+	 v1: %44,  s2: %45 = v_add_co_u32 (kill)%30, (kill)%42
+	 v1: %46,  s2: (kill)%47 = v_addc_co_u32 (kill)%41, (kill)%43, (kill)%45
+	 v2: %17 = p_create_vector (kill)%44, (kill)%46
+	 v1: %56 = global_load_ushort (kill)%17,  s1: undef storage:buffer
+	 v1: %21 = v_ashrrev_i32 31, %5
+	 v2: %22 = p_create_vector (kill)%5, (kill)%21
+	 v2: %23 = v_lshlrev_b64_e64 2, (kill)%22
+	 v1: %49 = p_parallelcopy (kill)%29
+	 v1: %50,  v1: %51 = p_split_vector (kill)%23
+	 v1: %52,  s2: %53 = v_add_co_u32 (kill)%28, (kill)%50
+	 v1: %54,  s2: (kill)%55 = v_addc_co_u32 (kill)%49, (kill)%51, (kill)%53
+	 v2: %25 = p_create_vector (kill)%52, (kill)%54
+	 v1: %26 = v_cvt_f32_u32 (kill)%56
+	global_store_dword (kill)%25,  s1: undef, (kill)%26 storage:buffer
+	p_logical_end
+	s_endpgm
+
+
+---- Assembly (Final Assembly)
+BB0:
+	v_lshl_add_u32 v0, s6, 6, v0                                ; d1fd0000 04010c06
+	v_mov_b32_e32 v3, 0                                         ; 7e060280
+	v_mov_b32_e32 v1, s5                                        ; 7e020205
+	v_and_b32_e32 v2, 63, v0                                    ; 260400bf
+	v_lshlrev_b64 v[2:3], 1, v[2:3]                             ; d28f0002 00020481
+	v_add_co_u32_e32 v4, vcc, s4, v2                            ; 32080404
+	v_addc_co_u32_e32 v5, vcc, v1, v3, vcc                      ; 380a0701
+	global_load_ushort v2, v[4:5], off                          ; dc488000 027f0004
+	v_mov_b32_e32 v3, s3                                        ; 7e060203
+	v_ashrrev_i32_e32 v1, 31, v0                                ; 2202009f
+	v_lshlrev_b64 v[0:1], 2, v[0:1]                             ; d28f0000 00020082
+	v_add_co_u32_e32 v4, vcc, s2, v0                            ; 32080002
+	v_addc_co_u32_e32 v5, vcc, v3, v1, vcc                      ; 380a0303
+	s_waitcnt vmcnt(0)                                          ; bf8c3f70
+	v_cvt_f32_u32_e32 v2, v2                                    ; 7e040d02
+	global_store_dword v[4:5], v2, off                          ; dc708000 007f0204
+	s_endpgm                                                    ; bf810000
+

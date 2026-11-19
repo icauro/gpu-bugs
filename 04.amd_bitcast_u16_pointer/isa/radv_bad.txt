@@ -1,0 +1,139 @@
+==== executable 0: compute (Vulkan Compute Shader), subgroup size 64
+Driver pipeline hash: 7643717971095015714
+SGPRs: 16
+VGPRs: 4
+Spilled SGPRs: 0
+Spilled VGPRs: 0
+Code size: 48
+LDS size: 0
+Scratch size: 0
+Subgroups per SIMD: 10
+Combined inputs: 0
+Combined outputs: 0
+Hash: 4028394525
+Instructions: 9
+Copies: 1
+Branches: 1
+Latency: 508
+Inverse Throughput: 51
+VMEM Clause: 2
+SMEM Clause: 0
+Pre-Sched SGPRs: 10
+Pre-Sched VGPRs: 3
+VALU: 4
+SALU: 0
+VMEM: 2
+SMEM: 0
+VOPD: 0
+---- NIR Shader(s) (The optimized NIR shader(s))
+shader: MESA_SHADER_COMPUTE
+source_blake3: {0x52106e7d, 0x2b5054b4, 0xc2af251e, 0xa5f3f38c, 0xb20d27da, 0xe6fc95d2, 0x1ee647e9, 0xc757d3c2}
+name: 
+workgroup_size: 64, 1, 1
+system_values_read: 0x00000000'00000000'00008400'00000000
+api_subgroup_size: 64
+max_subgroup_size: 64
+min_subgroup_size: 64
+bit_sizes_int: 0x71
+separate_shader: true
+flrp_lowered: true
+writes_memory: true
+uniforms: 20
+decl_var push_const INTERP_MODE_NONE none type.PushConstant.Push push
+decl_function cs_main () (entrypoint)
+
+impl cs_main {
+    con block b0:       // preds:
+    con 32     %0 = @load_scalar_arg_amd (base=6, arg_upper_bound_u32_amd=0, arg_num_lsb_zero=0)
+    div 32     %1 = @load_vector_arg_amd (base=8, arg_upper_bound_u32_amd=63, arg_num_lsb_zero=0)
+    con 32     %2 = load_const (0x00000006)
+    con 32     %3 = ishl %0, %2 (0x6)
+    div 32     %4 = iadd %3, %1
+    con 32     %5 = @load_scalar_arg_amd (base=5, arg_upper_bound_u32_amd=0, arg_num_lsb_zero=0)
+    div 1      %6 = ult %4, %5
+                    // succs: b1 b2
+    if %6 {
+        div block b1:       // preds: b0
+        con 32     %7 = @load_scalar_arg_amd (base=1, arg_upper_bound_u32_amd=0, arg_num_lsb_zero=0)
+        con 32     %8 = @load_scalar_arg_amd (base=2, arg_upper_bound_u32_amd=0, arg_num_lsb_zero=0)
+        con 32     %9 = @load_scalar_arg_amd (base=3, arg_upper_bound_u32_amd=0, arg_num_lsb_zero=0)
+        con 32    %10 = @load_scalar_arg_amd (base=4, arg_upper_bound_u32_amd=0, arg_num_lsb_zero=0)
+        con 32    %11 = load_const (0x00000001)
+        div 32    %12 = ishl %4, %11 (0x1)
+        con 64    %13 = pack_64_2x32_split %7, %8
+        div 16    %14 = @load_global_amd (%13, %12) (base=0, access=none, align_mul=2, align_offset=0)
+        con 32    %15 = load_const (0x00000002)
+        div 32    %16 = ishl %4, %15 (0x2)
+        con 64    %17 = pack_64_2x32_split %9, %10
+        div 32    %18 = u2u32 %14
+                        @store_global_amd (%18, %17, %16) (base=0, access=none, align_mul=4, align_offset=0, wrmask=x)
+                        // succs: b3
+    } else {
+        div block b2:  // preds: b0, succs: b3
+    }
+    con block b3:  // preds: b1 b2, succs: b4
+    block b4:
+}
+
+
+---- ACO IR (The ACO IR after some optimizations)
+After Spilling:
+ACO shader stage: SW (CS), HW (COMPUTE_SHADER)
+BB0
+/* logical preds: / linear preds: / kind: top-level, branch, */
+	 s2: %20:s[0-1],  s1: %21:s[2],  s1: %22:s[3],  s1: %23:s[4],  s1: %24:s[5],  s1: %25:s[6],  s1: %26:s[7],  s1: %27:s[8],  v1: %28:v[0],  v1: (kill)%29:v[1],  v1: (kill)%30:v[2] = p_startpgm
+	 s2: (kill)%32,  s1: (kill)%31:scc = p_init_scratch (kill)%20, (lateKill)%27
+	p_logical_start
+	 v1: %5 = v_lshl_add_u32 (kill)%26, 6, (kill)%28
+	 s2: %7 = v_cmp_gt_u32 (kill)%25, %5
+	p_logical_end
+	 s2: %0:exec = p_parallelcopy (kill)%7
+	p_cbranch_z %0:exec BB2, BB1
+BB1
+/* logical preds: BB0, / linear preds: BB0, / kind: uniform, */
+	p_logical_start
+	 v1: %13 = v_lshlrev_b32 1, %5
+	 s2: %14 = p_create_vector (kill)%21, (kill)%22
+	 v1: %19 = global_load_ushort (kill)%13, (kill)%14 storage:buffer
+	 v1: %17 = v_lshlrev_b32 2, (kill)%5
+	 s2: %18 = p_create_vector (kill)%23, (kill)%24
+	global_store_dword (kill)%17, (kill)%18, (kill)%19 storage:buffer
+	p_logical_end
+	p_branch BB3
+BB2
+/* logical preds: / linear preds: BB0, / kind: uniform, */
+	p_branch BB3
+BB3
+/* logical preds: / linear preds: BB1, BB2, / kind: invert, */
+	 s2: %0:exec,  s1: (kill)%34:scc = s_andn2_b64 -1, %0:exec
+	p_cbranch_z %0:exec BB5, BB4
+BB4
+/* logical preds: BB0, / linear preds: BB3, / kind: uniform, */
+	p_logical_start
+	p_logical_end
+	p_branch BB6
+BB5
+/* logical preds: / linear preds: BB3, / kind: uniform, */
+	p_branch BB6
+BB6
+/* logical preds: BB1, BB4, / linear preds: BB4, BB5, / kind: uniform, top-level, merge, */
+	 s2: %0:exec = p_parallelcopy -1
+	p_logical_start
+	p_logical_end
+	s_endpgm
+
+
+---- Assembly (Final Assembly)
+BB0:
+	v_lshl_add_u32 v0, s7, 6, v0                                ; d1fd0000 04010c07
+	v_cmpx_gt_u32_e32 vcc, s6, v0                               ; 7db80006
+	s_cbranch_execz BB6                                         ; bf880007
+BB1:
+	v_lshlrev_b32_e32 v1, 1, v0                                 ; 24020081
+	global_load_ushort v1, v1, s[2:3]                           ; dc488000 01020001
+	v_lshlrev_b32_e32 v0, 2, v0                                 ; 24000082
+	s_waitcnt vmcnt(0)                                          ; bf8c3f70
+	global_store_dword v0, v1, s[4:5]                           ; dc708000 00040100
+BB6:
+	s_endpgm                                                    ; bf810000
+
